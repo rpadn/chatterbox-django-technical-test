@@ -1,16 +1,21 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView
+
+from blog.models import Blog
+from blog.serializers import BlogSerializer, CommentSerializer
 
 
-class BlogAPIView:
+class BlogAPIView(ListCreateAPIView):
     """
-    Create blog api_view
+    View for listing all blogs.
     """
-    pass
+
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
 
 
-class CommentAPIView:
+class CommentAPIView(CreateAPIView):
     """
-    Create comment api_view
+    View for creating a blog comment.
     """
-    pass
 
+    serializer_class = CommentSerializer
