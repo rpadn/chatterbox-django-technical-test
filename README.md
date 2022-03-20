@@ -1,4 +1,8 @@
 # Technical Test Django
+The project lets you create blogs and comments for each blog.
+
+A blog contains a title, a description and an optional image.
+A comment is plain text linked to a blog.
 
 ## Getting Started
 
@@ -21,44 +25,76 @@ All the necessary libraries are in requirements.txt
 pip install -r requirements.txt
 ```
 
-### Goal
+## Running the application
 
-In this test , you will work on  basic tasks from developing models & APIs to testing.
-
-
-
-**Task 1: Create models based on this description**
 ```
-File : blog/models.py
-```
-```
-I want to create a blog with a title as required field at most 50 characters, 
-the blog has also description and an image can be uploaded.
-Each blog can have many comments associated with it.
-A comment is just a text and must contain the time to creation as well.
+python manage.py runserver
 ```
 
-**Task 2: Create serializers for each created model**
-```
-File : blog/serializers.py
-```
-
-**Task 3: Create endpoints for each created model**
-```
-File : blog/views.py
-```
-```
-For Blog endpoints , you are asked to develop 2 endpoints ( one for creation and another one for listing)
-
-For Comment endpoints , you are asked to develop only an endpoint for creation
+You will need to setup the database the first time you run the app. In order to
+do this simply run:
 ```
 
-**Task 4: Add endpoint urls**
-```
-File : blog/urls.py
+python manage.py migrate
 ```
 
-**Task 5: Add tests to your recent endpoints**
+### `/api/blog/`
+
+The `/api/blog/` endpoint lets you list the existing blogs, and create a new
+blog.
+
+To list blogs:
 ```
-File : blog/tests.py
+GET /api/blog/
 ```
+
+To create a blog you need to POST a form (multipart POST data):
+```
+POST /api/blog/
+blog_title="A blog title"
+blog_description="The blog description"
+```
+
+You can also upload an image when creating a blog:
+```
+POST /api/blog/
+blog_title="A blog title"
+blog_description="The blog description"
+image=/path/to/image
+```
+
+### `/api/blog/<blog-id>/comment/`
+
+The `/api/blog/<blog-id>/comment/` endpoint lets you create a comment for an
+existing blog.
+
+To create a comment you need to POST a form (multipart POST data):
+```
+POST /api/blog/1/comment/
+blog=1
+comment_text="A comment"
+```
+
+The application currently does not support listing existing comments.
+
+
+## Running tests
+Tests can be executed by simply running:
+```
+python manage.py test
+```
+
+## Known issues / design decisions
+- Images are managed by a `django.db.models.FileField`: while this works, it is
+  not as secure as `django.db.models.ImageField` (which checks that the
+  uploaded file is a valid image). By installing `Pillow` this field can be
+  replaced
+- When posting a comment, the blog id needs to be passed both in the endpoint
+  and in the data posted. This is redundant and ideally the application should
+  be able to infer the blog-id from the URL directly.
+
+## Notes
+Although the guidelines were saying to complete the exercise in ~2 hours, it
+took a bit longer (~3.5h). Time was mostly spent reading the documentation of
+django and django-rest-framework, which I've never used before :)
+
